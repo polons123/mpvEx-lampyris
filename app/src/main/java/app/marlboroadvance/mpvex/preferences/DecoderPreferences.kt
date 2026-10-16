@@ -8,6 +8,8 @@ class DecoderPreferences(
   preferenceStore: PreferenceStore,
 ) {
   val profile = preferenceStore.getString("mpv_profile", "fast")
+  val lampyrisProfile = preferenceStore.getString("lampyris_profile", "")
+  val lampyrisAutoSdr = preferenceStore.getBoolean("lampyris_autosdr", false)
   val tryHWDecoding = preferenceStore.getBoolean("try_hw_dec", true)
   val gpuNext = preferenceStore.getBoolean("gpu_next")
   val useVulkan = preferenceStore.getBoolean("use_vulkan", false)

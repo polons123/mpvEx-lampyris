@@ -97,6 +97,7 @@ class MPVView(
   override fun initOptions() {
     val profile = decoderPreferences.profile.get()
     MPVLib.setOptionString("profile", profile)
+    LampyrisProfiles.applyInitial(decoderPreferences.lampyrisProfile.get())
     setVo(if (decoderPreferences.gpuNext.get()) "gpu-next" else "gpu")
     
     // Set GPU API context (Vulkan or OpenGL)
@@ -212,6 +213,7 @@ class MPVView(
       "pause" to MPVLib.MpvFormat.MPV_FORMAT_FLAG,
       "paused-for-cache" to MPVLib.MpvFormat.MPV_FORMAT_FLAG,
       "video-params/aspect" to MPVLib.MpvFormat.MPV_FORMAT_DOUBLE,
+      "video-params/gamma" to MPVLib.MpvFormat.MPV_FORMAT_STRING,
       "video-params/w" to MPVLib.MpvFormat.MPV_FORMAT_INT64,
       "video-params/h" to MPVLib.MpvFormat.MPV_FORMAT_INT64,
       "eof-reached" to MPVLib.MpvFormat.MPV_FORMAT_FLAG,

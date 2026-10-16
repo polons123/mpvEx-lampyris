@@ -165,6 +165,9 @@
   <string name="pref_decoder">Decoder</string>
   <string name="pref_decoder_summary">Hardware decoding, pixel format, debanding</string>
   <string name="pref_decoder_profile_title">MPV Profile</string>
+  <string name="pref_lampyris_profile_title">Picture profile</string>
+  <string name="pref_lampyris_autosdr_title">SDR auto-correction</string>
+  <string name="pref_lampyris_autosdr_summary">Sets gamma 8 and saturation 4 for SDR video (not HDR)</string>
   <string name="pref_decoder_try_hw_dec_title">Try hardware decoding</string>
   <string name="pref_decoder_gpu_next_title">Use gpu-next</string>
   <string name="pref_decoder_gpu_next_summary">A new rendering backend</string>

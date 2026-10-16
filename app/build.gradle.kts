@@ -15,7 +15,7 @@ android {
   compileSdk = 37
 
   defaultConfig {
-    applicationId = "app.marlboroadvance.mpvex"
+    applicationId = "io.github.polons123.mpvexlampyris"
     minSdk = 26
     targetSdk = 36
     versionCode = 131
@@ -35,7 +35,7 @@ android {
     create("standard") {
       dimension = "distribution"
       isDefault = true
-      buildConfigField("boolean", "ENABLE_UPDATE_FEATURE", "true")
+      buildConfigField("boolean", "ENABLE_UPDATE_FEATURE", "false")
       buildConfigField("boolean", "SCOPED_STORAGE_ONLY", "false")
     }
 

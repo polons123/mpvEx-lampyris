@@ -47,6 +47,7 @@ import app.marlboroadvance.mpvex.ui.preferences.VulkanUtils
 import kotlinx.serialization.Serializable
 import me.zhanghai.compose.preference.ListPreference
 import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import app.marlboroadvance.mpvex.ui.player.LampyrisProfiles
 import me.zhanghai.compose.preference.SwitchPreference
 import org.koin.compose.koinInject
 
@@ -106,6 +107,38 @@ object DecoderPreferencesScreen : Screen {
                 summary = {
                   Text(
                     currentProfile.displayName,
+                    color = MaterialTheme.colorScheme.outline,
+                  )
+                },
+              )
+
+              PreferenceDivider()
+
+              val lampyrisProfile by preferences.lampyrisProfile.collectAsState()
+              val lampyrisNames = listOf("none") + LampyrisProfiles.NAMES
+              ListPreference(
+                value = lampyrisProfile.ifEmpty { "none" },
+                onValueChange = { preferences.lampyrisProfile.set(if (it == "none") "" else it) },
+                values = lampyrisNames,
+                title = { Text(stringResource(R.string.pref_lampyris_profile_title)) },
+                summary = {
+                  Text(
+                    lampyrisProfile.ifEmpty { "none" },
+                    color = MaterialTheme.colorScheme.outline,
+                  )
+                },
+              )
+
+              PreferenceDivider()
+
+              val lampyrisAutoSdr by preferences.lampyrisAutoSdr.collectAsState()
+              SwitchPreference(
+                value = lampyrisAutoSdr,
+                onValueChange = { preferences.lampyrisAutoSdr.set(it) },
+                title = { Text(stringResource(R.string.pref_lampyris_autosdr_title)) },
+                summary = {
+                  Text(
+                    stringResource(R.string.pref_lampyris_autosdr_summary),
                     color = MaterialTheme.colorScheme.outline,
                   )
                 },

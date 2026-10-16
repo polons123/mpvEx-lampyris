@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import app.marlboroadvance.mpvex.R
+import app.marlboroadvance.mpvex.ui.player.LampyrisProfiles
 import app.marlboroadvance.mpvex.domain.anime4k.Anime4KManager
 import app.marlboroadvance.mpvex.preferences.AdvancedPreferences
 import app.marlboroadvance.mpvex.preferences.DecoderPreferences
@@ -143,6 +144,29 @@ val scope = rememberCoroutineScope()
         }
       }
 
+
+      var lampyrisSelected by remember { mutableStateOf(decoderPreferences.lampyrisProfile.get()) }
+      Text(
+        text = stringResource(R.string.pref_lampyris_profile_title),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary,
+      )
+      LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.smaller),
+      ) {
+        items(listOf("") + LampyrisProfiles.NAMES) { name ->
+          FilterChip(
+            label = { Text(name.ifEmpty { stringResource(R.string.player_sheets_tracks_off) }) },
+            onClick = {
+              lampyrisSelected = name
+              decoderPreferences.lampyrisProfile.set(name)
+              LampyrisProfiles.applyNow(name, decoderPreferences.profile.get())
+            },
+            selected = lampyrisSelected == name,
+            leadingIcon = null,
+          )
+        }
+      }
 
       Text(
         text = stringResource(R.string.player_sheets_stats_page_title),

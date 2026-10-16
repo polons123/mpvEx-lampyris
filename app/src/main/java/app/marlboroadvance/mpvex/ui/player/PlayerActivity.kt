@@ -117,6 +117,7 @@ class PlayerActivity :
    * Preferences for player settings.
    */
   private val playerPreferences: PlayerPreferences by inject()
+  private val decoderPreferences: app.marlboroadvance.mpvex.preferences.DecoderPreferences by inject()
 
   /**
    * Preferences for audio settings.
@@ -1624,7 +1625,9 @@ class PlayerActivity :
     property: String,
     value: String,
   ) {
-    // Currently no String properties are handled
+    if (property == "video-params/gamma") {
+      LampyrisProfiles.onVideoGamma(decoderPreferences.lampyrisAutoSdr.get(), value)
+    }
   }
 
   /**
