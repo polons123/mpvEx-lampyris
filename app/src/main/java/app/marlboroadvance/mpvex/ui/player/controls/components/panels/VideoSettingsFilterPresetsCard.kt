@@ -25,6 +25,7 @@ import app.marlboroadvance.mpvex.preferences.DecoderPreferences
 import app.marlboroadvance.mpvex.preferences.preference.collectAsState
 import app.marlboroadvance.mpvex.presentation.components.ExpandableCard
 import app.marlboroadvance.mpvex.ui.player.FilterPreset
+import app.marlboroadvance.mpvex.ui.player.LampyrisProfiles
 import app.marlboroadvance.mpvex.ui.player.controls.CARDS_MAX_WIDTH
 import app.marlboroadvance.mpvex.ui.player.controls.panelCardsColors
 import app.marlboroadvance.mpvex.ui.theme.spacing
@@ -93,12 +94,12 @@ fun VideoSettingsFilterPresetsCard(modifier: Modifier = Modifier) {
               decoderPreferences.sharpnessFilter.set(preset.sharpness)
 
               // Apply to MPV
-              MPVLib.setPropertyInt("brightness", preset.brightness)
-              MPVLib.setPropertyInt("saturation", preset.saturation)
-              MPVLib.setPropertyInt("contrast", preset.contrast)
-              MPVLib.setPropertyInt("gamma", preset.gamma)
-              MPVLib.setPropertyInt("hue", preset.hue)
-              MPVLib.setPropertyInt("sharpen", preset.sharpness)
+              LampyrisProfiles.setFilter("brightness", preset.brightness)
+              LampyrisProfiles.setFilter("saturation", preset.saturation)
+              LampyrisProfiles.setFilter("contrast", preset.contrast)
+              LampyrisProfiles.setFilter("gamma", preset.gamma)
+              LampyrisProfiles.setFilter("hue", preset.hue)
+              LampyrisProfiles.setFilter("sharpen", preset.sharpness)
             },
             label = { Text(preset.displayName) },
             leadingIcon = null,

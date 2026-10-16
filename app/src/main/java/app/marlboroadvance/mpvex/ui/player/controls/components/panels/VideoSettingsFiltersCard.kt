@@ -23,6 +23,7 @@ import app.marlboroadvance.mpvex.preferences.preference.collectAsState
 import app.marlboroadvance.mpvex.preferences.preference.deleteAndGet
 import app.marlboroadvance.mpvex.presentation.components.ExpandableCard
 import app.marlboroadvance.mpvex.presentation.components.SliderItem
+import app.marlboroadvance.mpvex.ui.player.LampyrisProfiles
 import app.marlboroadvance.mpvex.ui.player.VideoFilters
 import app.marlboroadvance.mpvex.ui.player.controls.CARDS_MAX_WIDTH
 import app.marlboroadvance.mpvex.ui.player.controls.panelCardsColors
@@ -56,7 +57,7 @@ fun VideoSettingsFiltersCard(modifier: Modifier = Modifier) {
         TextButton(
           onClick = {
             VideoFilters.entries.forEach {
-              MPVLib.setPropertyInt(it.mpvProperty, it.preference(decoderPreferences).deleteAndGet())
+              LampyrisProfiles.setFilter(it.mpvProperty, it.preference(decoderPreferences).deleteAndGet())
             }
           },
         ) {
@@ -71,7 +72,7 @@ fun VideoSettingsFiltersCard(modifier: Modifier = Modifier) {
             valueText = value.toString(),
             onChange = {
               filter.preference(decoderPreferences).set(it)
-              MPVLib.setPropertyInt(filter.mpvProperty, it)
+              LampyrisProfiles.setFilter(filter.mpvProperty, it)
             },
             max = filter.max,
             min = filter.min,

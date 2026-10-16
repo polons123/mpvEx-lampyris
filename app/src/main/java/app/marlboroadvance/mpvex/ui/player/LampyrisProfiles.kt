@@ -76,16 +76,33 @@ object LampyrisProfiles {
 
     val NAMES: List<String> get() = PROFILES.keys.toList()
 
-    private val allKeys: Set<String> by lazy { PROFILES.values.flatMap { p -> p.map { it.first } }.toSet() }
+    private val ownKeys: Set<String> by lazy { PROFILES.values.flatMap { p -> p.map { it.first } }.toSet() }
+
+    /** Options changed by built-in mpv profiles (fast, high-quality, ...), read from the "profile-list" property. */
+    private fun builtinKeys(): Set<String> = runCatching {
+        val keys = mutableSetOf<String>()
+        val list = org.json.JSONArray(MPVLib.getPropertyString("profile-list") ?: "[]")
+        for (i in 0 until list.length()) {
+            val profile = list.getJSONObject(i)
+            if (profile.optString("name") == "default") continue
+            val options = profile.optJSONArray("options") ?: continue
+            for (j in 0 until options.length()) keys.add(options.getJSONObject(j).optString("key"))
+        }
+        keys.remove("")
+        keys
+    }.getOrDefault(emptySet())
 
     /** Before MPVLib.init(): options only, user mpv.conf can still override them. */
     fun applyInitial(name: String) {
         PROFILES[name]?.forEach { (k, v) -> MPVLib.setOptionString(k, v) }
     }
 
-    /** At runtime: back to the baseline (mpv profile [base]) and sets the profile's options. */
+    /**
+     * At runtime: resets everything that profiles can change to defaults, applies the base mpv profile
+     * ([base]: fast, high-quality, ...), then the picture profile [name] on top.
+     */
     fun applyNow(name: String, base: String) {
-        for (k in allKeys) {
+        for (k in ownKeys + builtinKeys()) {
             val def = MPVLib.getPropertyString("option-info/$k/default-value") ?: continue
             MPVLib.setPropertyString(k, def)
         }
@@ -93,23 +110,31 @@ object LampyrisProfiles {
         PROFILES[name]?.forEach { (k, v) -> MPVLib.setPropertyString(k, v) }
     }
 
-    // SDR auto-correction: gamma/saturation for video that is not PQ/HLG (HDR)
-    private const val AUTO_GAMMA = 8
-    private const val AUTO_SATURATION = 4
+    // SDR auto-correction: added on top of the user's filter values (gamma +8, saturation +4) for video that is not PQ/HLG (HDR)
+    private val AUTO_OFFSETS = mapOf("gamma" to 8, "saturation" to 4)
     private var autoApplied = false
 
     fun isSdr(gamma: String?) = !gamma.isNullOrEmpty() && gamma != "pq" && gamma != "hlg"
 
-    fun onVideoGamma(autoOn: Boolean, gamma: String?) {
+    private fun clamp(v: Int) = v.coerceIn(-100, 100)
+
+    private fun offset(property: String) = if (autoApplied) AUTO_OFFSETS[property] ?: 0 else 0
+
+    /** Sets a filter (brightness, gamma, ...) to the user's value plus the active auto-correction offset. */
+    fun setFilter(property: String, userValue: Int) {
+        MPVLib.setPropertyInt(property, clamp(userValue + offset(property)))
+    }
+
+    /** [userValue] returns the user's saved filter value for an mpv property. */
+    fun onVideoGamma(autoOn: Boolean, gamma: String?, userValue: (String) -> Int) {
         if (!autoOn && !autoApplied) return
         if (autoOn && isSdr(gamma)) {
-            MPVLib.setPropertyInt("gamma", AUTO_GAMMA)
-            MPVLib.setPropertyInt("saturation", AUTO_SATURATION)
             autoApplied = true
         } else if (autoApplied && !gamma.isNullOrEmpty()) {
-            MPVLib.setPropertyInt("gamma", 0)
-            MPVLib.setPropertyInt("saturation", 0)
             autoApplied = false
+        } else {
+            return
         }
+        for (property in AUTO_OFFSETS.keys) setFilter(property, userValue(property))
     }
 }

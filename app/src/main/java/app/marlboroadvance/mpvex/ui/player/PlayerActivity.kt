@@ -1626,7 +1626,9 @@ class PlayerActivity :
     value: String,
   ) {
     if (property == "video-params/gamma") {
-      LampyrisProfiles.onVideoGamma(decoderPreferences.lampyrisAutoSdr.get(), value)
+      LampyrisProfiles.onVideoGamma(decoderPreferences.lampyrisAutoSdr.get(), value) { property ->
+        VideoFilters.entries.first { it.mpvProperty == property }.preference(decoderPreferences).get()
+      }
     }
   }
 

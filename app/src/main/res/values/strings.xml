@@ -166,6 +166,7 @@
   <string name="pref_decoder_summary">Hardware decoding, pixel format, debanding</string>
   <string name="pref_decoder_profile_title">MPV Profile</string>
   <string name="pref_lampyris_profile_title">Picture profile</string>
+  <string name="player_sheets_profiles_base">MPV profile (base)</string>
   <string name="pref_lampyris_autosdr_title">SDR auto-correction</string>
   <string name="pref_lampyris_autosdr_summary">Sets gamma 8 and saturation 4 for SDR video (not HDR)</string>
   <string name="pref_decoder_try_hw_dec_title">Try hardware decoding</string>

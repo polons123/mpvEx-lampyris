@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
@@ -46,6 +47,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import app.marlboroadvance.mpvex.R
 import app.marlboroadvance.mpvex.ui.player.LampyrisProfiles
+import app.marlboroadvance.mpvex.ui.player.MPVProfile
+import app.marlboroadvance.mpvex.ui.player.VideoFilters
 import app.marlboroadvance.mpvex.domain.anime4k.Anime4KManager
 import app.marlboroadvance.mpvex.preferences.AdvancedPreferences
 import app.marlboroadvance.mpvex.preferences.DecoderPreferences
@@ -146,6 +149,28 @@ val scope = rememberCoroutineScope()
 
 
       var lampyrisSelected by remember { mutableStateOf(decoderPreferences.lampyrisProfile.get()) }
+      var baseSelected by remember { mutableStateOf(decoderPreferences.profile.get()) }
+      Text(
+        text = stringResource(R.string.player_sheets_profiles_base),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary,
+      )
+      LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.smaller),
+      ) {
+        items(MPVProfile.entries) { base ->
+          FilterChip(
+            label = { Text(base.displayName) },
+            onClick = {
+              baseSelected = base.value
+              decoderPreferences.profile.set(base.value)
+              LampyrisProfiles.applyNow(lampyrisSelected, base.value)
+            },
+            selected = baseSelected == base.value,
+            leadingIcon = null,
+          )
+        }
+      }
       Text(
         text = stringResource(R.string.pref_lampyris_profile_title),
         style = MaterialTheme.typography.titleMedium,
@@ -160,12 +185,35 @@ val scope = rememberCoroutineScope()
             onClick = {
               lampyrisSelected = name
               decoderPreferences.lampyrisProfile.set(name)
-              LampyrisProfiles.applyNow(name, decoderPreferences.profile.get())
+              LampyrisProfiles.applyNow(name, baseSelected)
             },
             selected = lampyrisSelected == name,
             leadingIcon = null,
           )
         }
+      }
+
+      var autoSdr by remember { mutableStateOf(decoderPreferences.lampyrisAutoSdr.get()) }
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+          text = stringResource(R.string.pref_lampyris_autosdr_title),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.primary,
+        )
+        Switch(
+          checked = autoSdr,
+          onCheckedChange = { on ->
+            autoSdr = on
+            decoderPreferences.lampyrisAutoSdr.set(on)
+            LampyrisProfiles.onVideoGamma(on, MPVLib.getPropertyString("video-params/gamma")) { property ->
+              VideoFilters.entries.first { it.mpvProperty == property }.preference(decoderPreferences).get()
+            }
+          },
+        )
       }
 
       Text(
